@@ -1,12 +1,9 @@
-from datetime import date
-
-
 
 class Caixa:
     def __init__(self, id : int, nome : str, saldo : float):
         self._id = id
         self._nome = nome
-        self._saldo = saldo
+        self._saldo = float(saldo)
 
 
 
@@ -51,11 +48,3 @@ class Caixa:
         Caixa.valida_valor(valor=valor)
        
         self._saldo -= valor
-
-
-        
-
-
-if __name__ == "__main__":
-    caixa = Caixa(1, "NT_GELADOS", 0)
-    caixa.entrada(100)
