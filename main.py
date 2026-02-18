@@ -6,4 +6,4 @@ banco: Banco = Banco()
 caixa = banco.obter_caixa()
 print(caixa.saldo)
 
-root : Janela = Janela(caixa)
+root : Janela = Janela(caixa, banco)

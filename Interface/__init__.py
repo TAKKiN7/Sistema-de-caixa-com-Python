@@ -3,11 +3,15 @@ from  tkinter import messagebox as msg
 from Interface.Borda_Frame import Borda
 from models.Caixa import Caixa
 from database.database import Banco
+from Interface.Saldo_Frame import Saldo_Frame
+from Interface.Historico_Frame import Historico_Frame
+
 
 class Janela(Tk):
-    def __init__(self, caixa : Caixa):
+    def __init__(self, caixa : Caixa, banco : Banco):
         super().__init__()
         self.caixa : Caixa = caixa
+        self.banco : Banco = banco
         self.config_janela()
         self.bordas()
         self.layout()
@@ -15,42 +19,59 @@ class Janela(Tk):
 
     def config_janela(self):
         self.attributes("-fullscreen", True)
-        #self.protocol("WM_DELETE_WINDOW", self.fechar)
+        self.protocol("WM_DELETE_WINDOW",lambda : ())
+        self.configure(background="#1C2238")
 
 
     def layout(self):
-        nomeL : Label = Label(self, text="CAIXA", font=("itim", 40, "bold"))
-        nomeL.place(relx=.45, rely=.01, relwidth=.20)
+        nomeL : Label = Label(self, text="CAIXA    ", font=("itim", 40, "bold"), bg="#171C2E", fg="WHITE")
+        nomeL.place(relx=.1, rely=.0, relwidth=.8)
+
+        self.frame_saldo()
+        self.frame_historico()
+
+        entradaB : Button = Button(self, text="Entrada", command=self.entrada, font=("itim", 20, "bold"), borderwidth=0, bg="#0f0",
+                                   fg="WHITE")
+        entradaB.place(relx=.25, rely=0.25, relwidth=.15)
+
+        saidaB: Button = Button(self, text="Saída", command=self.saida, font=("itim", 20, "bold"), borderwidth=0, bg="#f00",
+                                fg="WHITE")
+        saidaB.place(relx=.41, rely=.25, relwidth=.15)
+
+        relatorioB: Button = Button(self, text="Relatório", font=("itim", 20, "bold"), borderwidth=0, bg="#00f",
+                                    fg="WHITE")
+        relatorioB.place(relx=.57, rely=.25, relwidth=.15)
+
+        self.fechar_button()
 
 
-        self.saldo : StringVar = StringVar()
-        self.saldo.set("10,00")
+    def frame_historico(self):
+        historico_frame : Frame = Historico_Frame(self)
 
-        saldoL : Label = Label(self, text="Saldo R$:", font=("itim", 20, "bold"))
-        saldoL.place(relx=.6, rely=.15)
+    def frame_saldo(self):
+        self.saldo: StringVar = StringVar()
+        self.saldo.set(self.saldo_formatado())
+        self.saldoF: Frame = Saldo_Frame(self, self.saldo)
 
-        caixaL : Label = Label(self, textvariable=self.saldo, font=("itim", 30, "bold"))
-        caixaL.place(relx=.7, rely=.14)
-
-        entradaB : Button = Button(self, text="Entrada")
-        entradaB.place(relx=.15, rely=0.35)
-
-        saidaB: Button = Button(self, text="Saída", command=self.teste)
-        saidaB.place(relx=.15, rely=0.4)
+    def fechar_button(self):
+        sairB: Button = Button(self, text="Sair", font=("itim", 10, "bold"),
+                               bg="#9b111e", fg="WHITE", command=self.fechar, borderwidth=0)
+        sairB.place(relx=.8, rely=.01, relwidth=.08)
 
 
     def bordas(self):
         bordaL : Borda = Borda(self)
-        bordaL.place(relx=0, rely=0, relwidth=.2, relheight=1)
+        bordaL.place(relx=0, rely=0, relwidth=.1, relheight=1)
 
         bordaR : Borda = Borda(self)
         bordaR.place(relx=.9, rely=0, relwidth=.1, relheight=1)
 
 
-    def teste(self):
+    def saldo_formatado(self) -> str:
         saldo : float = self.caixa.saldo
         saldot : str = str(f"{saldo:.2f}").replace(".", ",")
-        self.saldo.set(saldot)
+
+        return saldot
 
     def run(self):
         self.mainloop()
@@ -61,3 +82,15 @@ class Janela(Tk):
         if not res:
             return
         self.destroy()
+
+
+    def entrada(self):
+        self.caixa.entrada(100)
+        self.banco.atualizar_caixa(self.caixa)
+        self.saldo.set(self.saldo_formatado())
+
+
+    def saida(self):
+        self.caixa.saida(100)
+        self.banco.atualizar_caixa(self.caixa)
+        self.saldo.set(self.saldo_formatado())
