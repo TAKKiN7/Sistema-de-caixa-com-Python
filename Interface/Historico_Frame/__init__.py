@@ -8,4 +8,4 @@ class Historico_Frame(Frame):
 
 
     def layout(self):
-        self.place(relx=.25, rely=0.6, relwidth=.47, relheight=.25)
+        self.place(relx=.25, rely=0.6, relwidth=.5, relheight=.25)

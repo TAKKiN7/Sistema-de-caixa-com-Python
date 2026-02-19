@@ -14,7 +14,7 @@ class Saldo_Frame(Frame):
         saldoL.place(relx=.425, rely=.08, relwidth=.15)
 
 
-        self.caixaL : Label = Label(self, textvariable=self.saldo, font=("itim", 50, "bold"), fg="GREEN", bg="#222A45")
+        self.caixaL : Label = Label(self, textvariable=self.saldo, font=("itim", 50, "bold"), fg="WHITE", bg="#222A45")
         self.caixaL.place(relx=.35 , rely=.3, relwidth=.3)
 
-        self.place(relx=.25, rely=0.34 ,relwidth=.47, relheight=.25)
+        self.place(relx=.25, rely=0.34 ,relwidth=.5, relheight=.25)

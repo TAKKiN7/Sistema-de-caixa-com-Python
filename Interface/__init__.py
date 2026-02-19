@@ -5,6 +5,7 @@ from models.Caixa import Caixa
 from database.database import Banco
 from Interface.Saldo_Frame import Saldo_Frame
 from Interface.Historico_Frame import Historico_Frame
+from Interface.Janela_Acao import JanelaAcaoEntrada, JanelaAcaoSaida
 
 
 class Janela(Tk):
@@ -24,7 +25,7 @@ class Janela(Tk):
 
 
     def layout(self):
-        nomeL : Label = Label(self, text="CAIXA    ", font=("itim", 40, "bold"), bg="#171C2E", fg="WHITE")
+        nomeL : Label = Label(self, text="CAIXA", font=("itim", 40, "bold"), bg="#171C2E", fg="WHITE")
         nomeL.place(relx=.1, rely=.0, relwidth=.8)
 
         self.frame_saldo()
@@ -32,15 +33,15 @@ class Janela(Tk):
 
         entradaB : Button = Button(self, text="Entrada", command=self.entrada, font=("itim", 20, "bold"), borderwidth=0, bg="#0f0",
                                    fg="WHITE")
-        entradaB.place(relx=.25, rely=0.25, relwidth=.15)
+        entradaB.place(relx=.26, rely=0.25, relwidth=.15)
 
         saidaB: Button = Button(self, text="Saída", command=self.saida, font=("itim", 20, "bold"), borderwidth=0, bg="#f00",
                                 fg="WHITE")
-        saidaB.place(relx=.41, rely=.25, relwidth=.15)
+        saidaB.place(relx=.42, rely=.25, relwidth=.16)
 
         relatorioB: Button = Button(self, text="Relatório", font=("itim", 20, "bold"), borderwidth=0, bg="#00f",
                                     fg="WHITE")
-        relatorioB.place(relx=.57, rely=.25, relwidth=.15)
+        relatorioB.place(relx=.59, rely=.25, relwidth=.15)
 
         self.fechar_button()
 
@@ -84,13 +85,19 @@ class Janela(Tk):
         self.destroy()
 
 
+
+    def atualizar_saldo(self):
+        self.saldo.set(self.saldo_formatado())
+
     def entrada(self):
-        self.caixa.entrada(100)
-        self.banco.atualizar_caixa(self.caixa)
+        janela : JanelaAcaoEntrada = JanelaAcaoEntrada(self, self.caixa, self.banco, self.atualizar_saldo)
+        #self.caixa.entrada(100)
+        #self.banco.atualizar_caixa(self.caixa)
         self.saldo.set(self.saldo_formatado())
 
 
     def saida(self):
-        self.caixa.saida(100)
-        self.banco.atualizar_caixa(self.caixa)
-        self.saldo.set(self.saldo_formatado())
+        janela : JanelaAcaoSaida = JanelaAcaoSaida(self, self.caixa, self.banco, self.atualizar_saldo)
+        #self.caixa.saida(100)
+        #self.banco.atualizar_caixa(self.caixa)
+        #self.saldo.set(self.saldo_formatado())
