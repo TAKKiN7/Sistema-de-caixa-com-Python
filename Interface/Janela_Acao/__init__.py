@@ -1,9 +1,9 @@
-from tkinter import Toplevel, Button, Label, Entry, StringVar
+from customtkinter import CTkToplevel, CTkButton, CTkLabel, CTkEntry, StringVar
 from tkinter import messagebox as msg
 from database.database import Banco
 from models.Caixa import Caixa
 
-class JanelaAcao(Toplevel):
+class JanelaAcao(CTkToplevel):
     def __init__(self, root, acao : str, caixa : Caixa, banco : Banco):
         super().__init__(root)
         self.caixa = caixa
@@ -30,24 +30,24 @@ class JanelaAcao(Toplevel):
         alturaT = self.winfo_screenheight()
         self.overrideredirect(True)
         self.geometry(f"350x200+{int((larguraT / 2) - (350 / 2))}+{int((alturaT / 2) - 200 / 2)}")
-        self.configure(bg=self.acao, highlightthickness=2, highlightbackground="BLACK", highlightcolor="BLACK")
+        self.configure(fg_color=self.acao)
 
 
 
     def layout(self):
-        tituloL : Label = Label(self, text=self.titulo, bg="BLACK", fg="WHITE", font=("Arial", 20, "bold"))
+        tituloL : CTkLabel = CTkLabel(self, text=self.titulo, fg_color="BLACK", text_color="WHITE", font=("Arial", 20, "bold"))
         tituloL.place(relx=.0, rely=.0, relwidth=1)
 
-        self.valorE : Entry = Entry(self, textvariable=StringVar(), font=("itim", 15, "bold"))
+        self.valorE : CTkEntry = CTkEntry(self, textvariable=StringVar(), font=("itim", 15, "bold"))
         self.valorE.bind("<Return>", lambda e: self.confirmar(e))
         self.valorE.place(relx=.35, rely=.3, relwidth=.3)
         self.valorE.focus_set()
 
-        confirmarB : Button = Button(self, text="Confirmar", command =self.confirmar, highlightthickness=1,
-                                     highlightcolor="WHITE")
+        confirmarB : CTkButton = CTkButton(self, text="Confirmar", command =self.confirmar, border_width=1,
+                                     border_color="WHITE")
         confirmarB.place(relx=.6, rely=.8, relwidth=.3)
 
-        cancelarB : Button = Button(self, text="Cancelar",command=self.cancelar)
+        cancelarB : CTkButton = CTkButton(self, text="Cancelar",command=self.cancelar)
         cancelarB.place(relx=.1, rely=.8, relwidth=.3)
 
 
