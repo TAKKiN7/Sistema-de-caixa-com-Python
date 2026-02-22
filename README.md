@@ -1,146 +1,139 @@
-# 💰 Sistema de Controle de Caixa com SQLite
+# 💰 Sistema de Controle de Caixa com Python
 
-Projeto desenvolvido em **Python** utilizando **SQLite** para controle simples de saldo (entrada e saída), aplicando conceitos de:
+Este projeto é uma solução robusta e leve para o controle de fluxos
+financeiros (entradas e saídas). Desenvolvido em Python, ele utiliza o
+SQLite3 para persistência de dados local, focando em uma arquitetura
+organizada e aplicação de boas práticas de Programação Orientada a
+Objetos (POO).
 
-- Programação Orientada a Objetos (POO)
-- Persistência de dados
-- Organização em camadas
-- Regras de negócio
-- Manipulação de arquivos com `pathlib`
+O objetivo principal é oferecer um sistema onde o saldo seja gerenciado
+de forma prática, garantindo a integridade dos dados e a persistência
+automática em um banco de dados local.
 
----
+------------------------------------------------------------------------
 
-## 📌 Objetivo do Projeto
+## 🚀 Funcionalidades
 
-Criar um sistema simples de controle de caixa que:
+-   **Gestão Automática de Banco de Dados:** O sistema cria
+    automaticamente a pasta `database/` e o arquivo `.db` ao ser
+    iniciado.\
+-   **Persistência de Dados:** Todas as movimentações de saldo são
+    salvas em tempo real no SQLite.\
+-   **Caixa Padrão:** Garantia de existência de um registro inicial
+    (`NT_GELADOS`) para evitar erros de referência.\
+-   **Validação de Transações:** Regras de negócio que impedem a entrada
+    de valores inválidos (negativos ou nulos).\
+-   **Flexibilidade de Saldo:** Suporte a saldo negativo (permite
+    controle de débitos).
 
-- Cria automaticamente o banco de dados
-- Garante a existência de um caixa padrão
-- Permite entrada e saída de valores
-- Persiste o saldo no banco SQLite
+------------------------------------------------------------------------
 
-Projeto focado em prática de backend e organização de código.
+## 🛠️ Tecnologias Utilizadas
 
----
+-   **Linguagem:** Python 3.x\
+-   **Banco de Dados:** SQLite3 (nativo do Python)\
+-   **Manipulação de Arquivos:** pathlib (para gestão de diretórios de
+    forma cross-platform)\
+-   **Paradigma:** Programação Orientada a Objetos (POO)
 
-## 🗂 Estrutura Atual do Projeto
+------------------------------------------------------------------------
 
+## 🗂️ Estrutura do Projeto
 
+    ├── database/            # Pasta criada automaticamente contendo o SQLite (.db)
+    ├── models/              # Definição das classes de domínio (Ex: Caixa)
+    ├── database/            # Lógica de conexão e persistência (Ex: Classe Banco)
+    ├── Interface/           # Camada de interação com o usuário (CLI/GUI)
+    ├── main.py              # Ponto de entrada da aplicação
+    └── requirements.txt     # Dependências do projeto
 
----
+------------------------------------------------------------------------
 
-## 🛠 Tecnologias Utilizadas
+## 🧱 Arquitetura e Classes
 
-- Python 3.x
-- sqlite3 (biblioteca padrão)
-- pathlib
-- Programação Orientada a Objetos
+### 1. Camada de Persistência (Classe Banco)
 
----
+Responsável por toda a "conversa" com o SQLite.
 
-## 🧱 Estrutura do Banco de Dados
+-   `create_table()` → Cria a tabela `gelados` caso ela não exista.\
+-   `garantir_caixa()` → Verifica se o caixa inicial está cadastrado;
+    caso contrário, realiza o insert inicial.\
+-   `atualizar_caixa()` → Sincroniza o estado do objeto `Caixa` da
+    memória com o banco de dados.
 
-Tabela criada automaticamente:
+### 2. Camada de Domínio (Classe Caixa)
 
-```sql
-CREATE TABLE IF NOT EXISTS gelados (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome VARCHAR(100),
-    saldo REAL
-); 
+Contém a lógica de negócio e as regras do saldo.
+
+-   `entrada(valor)` → Adiciona fundos ao saldo após validação.\
+-   `saida(valor)` → Subtrai fundos do saldo.\
+-   `valida_valor(valor)` → Método interno que garante que nenhum valor
+    menor ou igual a zero seja processado.
+
+------------------------------------------------------------------------
+
+## 🔧 Como Instalar e Rodar
+
+### 1️⃣ Clone o repositório:
+
+``` bash
+git clone https://github.com/TAKKiN7/Sistema-de-caixa-com-Python.git
+cd Sistema-de-caixa-com-Python
 ```
 
+### 2️⃣ Crie um ambiente virtual (opcional, mas recomendado):
 
-Ao iniciar a classe Banco, o sistema:
+``` bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
 
-- Cria a pasta `database` se não existir
-- Cria o arquivo `database.db`
-- Cria a tabela `gelados`
+### 3️⃣ Instale as dependências:
 
+``` bash
+pip install -r requirements.txt
+```
 
-Insere automaticamente um registro padrão:
+### 4️⃣ Execute a aplicação:
 
-nome: NT_GELADOS
+``` bash
+python main.py
+```
 
-saldo: 0
+------------------------------------------------------------------------
 
+## ⚠️ Regras de Negócio
 
-🏗 Arquitetura Atual
-🔹 Classe Banco
+### 🔐 Segurança de Dados
 
-Responsável pela camada de persistência.
+O sistema utiliza o gerenciador de contexto:
 
-Principais responsabilidades:
+``` python
+with sqlite3.connect(...):
+```
 
-- Criar diretório e arquivo do banco
-- Criar tabela
-- Garantir existência do caixaa
--Buscar dados do caixa
--Atualizar saldo
--Principais métodos:
+Garantindo que o banco de dados seja fechado corretamente mesmo em caso
+de erro.
 
-Método	Função
-create_table()	Cria a tabela se não existir
-garantir_caixa()	Garante que exista um caixa inicial
-obter_caixa()	Retorna objeto Caixa
-atualizar_caixa()	Atualiza saldo no banco
-🔹 Classe Caixa
+### 📏 Validação Rígida
 
-Representa o caixa em memória (camada de domínio).
-
-Atributos:
-
-id
-
-nome
-
-saldo
-
-Métodos:
-
-Método	Descrição
-entrada(valor)	Adiciona valor ao saldo
-saida(valor)	Subtrai valor do saldo (permite negativo)
-valida_valor(valor)	Garante valor maior que zero
-
-Regra de validação:
-
-```python
+``` python
 if valor <= 0:
-    raise ValueError("Valor de entrada deve ser maior que ZERO")
+    raise ValueError("O valor de movimentação deve ser maior que ZERO.")
 ```
 
-🚀 Exemplo de Uso
-from banco import Banco
+### 💾 Persistência
 
-banco = Banco()
+O saldo é persistido no banco de dados toda vez que uma operação de
+entrada ou saída é finalizada com sucesso.
 
-caixa = banco.obter_caixa()
+------------------------------------------------------------------------
 
-caixa.entrada(150)
-banco.atualizar_caixa(caixa)
+## 📝 Licença
 
-print(caixa.saldo)
+Este projeto está sob a licença MIT.
 
-🔄 Fluxo de Funcionamento
-Instancia Banco
-      ↓
-Cria pasta database
-      ↓
-Cria arquivo database.db
-      ↓
-Cria tabela gelados
-      ↓
-Garante caixa padrão
-      ↓
-Sistema pronto para uso
+------------------------------------------------------------------------
 
-⚠ Regras de Negócio
-
-Não é permitido entrada ou saída com valor menor ou igual a zero.
-
-O saldo pode ficar negativo (controle de débito permitido).
-
-Todas as conexões utilizam with sqlite3.connect() garantindo fechamento automático.
-
-
+Desenvolvido com foco em estudo de Backend e Engenharia de Software.
