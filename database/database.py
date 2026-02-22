@@ -1,6 +1,7 @@
 import sqlite3
 from pathlib import Path
 from models.Caixa import Caixa
+from models.Historico import Historico
 
 
 
@@ -28,6 +29,7 @@ class Banco:
         with sqlite3.connect(self._banco) as conn:
             cursor : sqlite3.Cursor = conn.cursor()
             cursor.execute("CREATE TABLE IF NOT EXISTS gelados (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR(100), saldo REAL)")
+            cursor.execute("CREATE TABLE IF NOT EXISTS historico (id INTEGER PRIMARY KEY AUTOINCREMENT, operacao VARCHAR(100), valor REAL)")
             conn.commit()
             self.garantir_caixa()
 
@@ -60,7 +62,16 @@ class Banco:
             saldo = resultado.get("saldo")
 
             return Caixa(id=id, nome=nome, saldo=saldo)
-        
+    
+    def realizar_registro(self, historico : Historico):
+        with sqlite3.connect(self._banco) as conn:
+            cursor : sqlite3.Cursor = conn.cursor()    
+            data : tuple = (historico.operacao, historico.valor)
+            cursor.execute("INSERT INTO historico (operacao, valor)  VALUES (?, ?)", data)
+            conn.commit()
+
+            return "Caixa atualizado."
+
     
     def atualizar_caixa(self, caixa : Caixa)-> str:
          with sqlite3.connect(self._banco) as conn:

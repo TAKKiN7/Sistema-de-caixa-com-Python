@@ -2,6 +2,7 @@ from customtkinter import CTkToplevel, CTkButton, CTkLabel, CTkEntry, StringVar
 from tkinter import messagebox as msg
 from database.database import Banco
 from models.Caixa import Caixa
+from models.Historico import Historico
 
 class JanelaAcao(CTkToplevel):
     def __init__(self, root, acao : str, caixa : Caixa, banco : Banco):
@@ -58,8 +59,6 @@ class JanelaAcao(CTkToplevel):
         pass
 
 
-
-
 class JanelaAcaoEntrada(JanelaAcao):
     def __init__(self, root, caixa, banco, fun, acao : str = "entrada"):
         super().__init__(root, acao, caixa, banco)
@@ -76,6 +75,13 @@ class JanelaAcaoEntrada(JanelaAcao):
             self.atualizar_saldo(valor)
             self.fun()
             self.destroy()
+            try:
+                historico : Historico = Historico("entrada", valor)
+                self.banco.realizar_registro(historico)
+            except:
+                print("Erro ao tentar contruir o obj historico")
+            else:
+                pass
 
 
     def atualizar_saldo(self, valor):
@@ -100,6 +106,14 @@ class JanelaAcaoSaida(JanelaAcao):
             self.atualizar_saldo(valor)
             self.fun()
             self.destroy()
+
+            try:
+                historico : Historico = Historico("saída", valor)
+                self.banco.realizar_registro(historico)
+            except:
+                print("Erro ao tentar contruir o obj historico")
+            else:
+                pass
 
     def atualizar_saldo(self, valor):
         self.caixa.saida(valor)

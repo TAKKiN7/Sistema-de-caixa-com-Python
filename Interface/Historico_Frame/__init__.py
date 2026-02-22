@@ -1,24 +1,49 @@
 from customtkinter import CTkFrame, CTkToplevel, CTkButton
 from tkinter.ttk import Treeview, Style
+import sqlite3
+from pathlib import Path
 
 
 class Historico_Treeview(Treeview):
     def __init__(self, root):
-        super().__init__(root, columns=("Valor", "Operação", "Data"), show="headings")
+        super().__init__(root, columns=("Id", "Valor", "Operação"), show="headings")
         self.layout()
 
 
     def layout(self):
-        self.heading("Valor", text="Valor", anchor="w")
+        self.heading("Valor", text="  Valor", anchor="w")
         self.heading("Operação", text="Opereção", anchor="w")
-        self.heading("Data", text="Data", anchor="w")
+        self.heading("Id", text="Id", anchor="w")
+        self.tag_configure("vermelho", foreground="red")
+        self.tag_configure("verde", foreground="green")
 
-        for c in range(100):
-            self.insert("", "end", values=(c, "Entrada", "22/02/2026")) # Somente um teste antes de implementar historico no banco de dados
+        registros = self.buscar_registros()
+        if registros:
+            for registro in registros:
+                historico : dict = dict(registro)
+                operacao = historico.get("operacao")
+                if operacao.lower() == "saída":
+                    saldo : str = str(f"-{historico.get("valor"):.2f}").replace(".", ",")
+                    self.insert("","end", values=(historico.get("id"), saldo, historico.get("operacao")), tags=("vermelho",))
+                else:
+                    saldo : str = str(f" {historico.get("valor"):.2f}").replace(".", ",")
+                    self.insert("","end", values=(historico.get("id"), saldo, historico.get("operacao")), tags=("verde",))
 
-        #self.pack(fill="both", expand=True)
         self.place(relx=0, rely=0.1, relwidth=1, relheight=.9)
     
+    
+    def buscar_registros(self) -> sqlite3.Row:
+        local : Path = Path.cwd() / "database/database.db"
+        with sqlite3.connect(local) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor : sqlite3.Cursor = conn.cursor()
+            cursor.execute("SELECT id, valor, operacao FROM historico")
+            registros : sqlite3.Row = cursor.fetchall()
+
+            return registros
+        
+
+
 
 class Historico(CTkToplevel):
     def __init__(self, root):
@@ -57,8 +82,10 @@ class Historico(CTkToplevel):
             foreground="WHITE",
             background="#1C2238",
             fieldbackground="#1C2238",
-            bordercolor="red",
-            borderwidth=3
+            bordercolor="BLACK",
+            borderwidth=1,
+            relief="RIDGE"
+
         )
 
         estilo.map(
@@ -71,7 +98,9 @@ class Historico(CTkToplevel):
             "Treeview.Heading",
             background="#1C2238",
             foreground="white",
-            relief="flat"
+            borderwidth=1,
+            bordercolor= "BLACK",
+            relief="RIDGE"
         )
 
         estilo.map(
