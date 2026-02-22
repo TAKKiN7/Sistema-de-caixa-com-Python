@@ -70,7 +70,7 @@ class Banco:
             cursor.execute("INSERT INTO historico (operacao, valor)  VALUES (?, ?)", data)
             conn.commit()
 
-            return "Caixa atualizado."
+            return "Registros atualizado."
 
     
     def atualizar_caixa(self, caixa : Caixa)-> str:
