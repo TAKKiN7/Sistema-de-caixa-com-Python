@@ -1,2 +1,23 @@
+# Python cache
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -20,7 +20,6 @@ class Janela(CTk):
 
     def config_janela(self):
         self.attributes("-fullscreen", True)
-        self.protocol("WM_DELETE_WINDOW",lambda : ())
         self.configure(fg_color="#1C2238")
 
 
