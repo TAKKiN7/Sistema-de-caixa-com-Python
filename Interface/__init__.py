@@ -38,10 +38,10 @@ class Janela(CTk):
                                 text_color="WHITE", hover_color="#c70606")
         saidaB.place(relx=.42, rely=.25, relwidth=.16, relheight=.06)
 
-        relatorioB: CTkButton = CTkButton(self, text="Relatório", font=("itim", 20, "bold"), border_width=0, fg_color="#0000ff",
+        historicoB: CTkButton = CTkButton(self, text="Histórico", font=("itim", 20, "bold"), border_width=0, fg_color="#0000ff",
                                     text_color="WHITE", hover_color="#0000c7",
                                     command=self.historico)
-        relatorioB.place(relx=.59, rely=.25, relwidth=.15, relheight=.06)
+        historicoB.place(relx=.59, rely=.25, relwidth=.15, relheight=.06)
 
         self.fechar_button()
 
